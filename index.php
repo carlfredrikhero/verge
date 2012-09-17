@@ -19,7 +19,26 @@ post('/signup', function($app){
 	
 	echo json_encode($user);
 	
-	$app->set('Message', 'Thanks for signing up ' . $app->form('name' . '!'));
+	$curl = curl_init();
+	
+	// curl options
+	$options = array(
+		CURLOPT_URL => 'localhost:5984/verge',
+		CURLOPT_POSTFIELDS => json_encode($user),
+		CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+		CURLOPT_CUSTOMREQUEST => 'POST',
+		CURLOPT_RETURNTRANSFER => TRUE,
+		CURLOPT_ENCODING => 'utf-8',
+		CURLOPT_HEADER => false,
+		CURLOPT_AUTOREFERER => true,
+	);
+	
+	curl_setopt_array($curl, $options);
+	
+	curl_exec($curl);
+	curl_close($curl);
+	
+	$app->set('message', 'Thanks for signing up ' . $app->form('name' . '!'));
 	$app->render('home');
 });
 
